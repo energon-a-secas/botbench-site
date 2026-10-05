@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Strict CSP. An inline script runs only if its sha256 is listed: the one hash is the theme
+       guard further down, so editing that script means re-hashing it (smoke check 29 reports a
+       mismatch). Inline on*="" handlers never run; attach listeners from a script file. Add a
+       source only when the page loads from it, as an exact host or a pinned path, never a whole
+       package CDN: a Convex deployment adds its https and wss URLs to connect-src, and sign-in
+       adds the CSP table in packages/neorgon-ui/auth/README.md. frame-ancestors, report-uri and
+       sandbox are ignored in a meta tag, so they are left out. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-na6phygP/tfoCIp4oBeQgGJJpQsZob/udrLum+20QTI=' https://gc.zgo.at https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://cdn.neorgon.org/v1.0.0/; img-src 'self' data: https://neorgon.goatcounter.com; font-src 'self'; connect-src 'self' https://neorgon.goatcounter.com https://cloudflareinsights.com; manifest-src 'self'; frame-src 'none'; worker-src 'none'; object-src 'none'; base-uri 'none'; form-action 'self'">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" sizes="16x16 32x32 48x48">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-title" content="Botbench">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="neo-mark" content="on">
+  <title>Botbench | Robot Kit Simulator</title>
+  <meta name="description" content="Plan LEGO 51515 and EV3 31313 robot builds, rehearse them in a 2D simulator and export Pybricks code, up to behaviours picked by Jev">
+  <meta property="og:title" content="Botbench | Robot Kit Simulator">
+  <meta property="og:description" content="Plan LEGO 51515 and EV3 31313 robot builds, rehearse them in a 2D simulator and export Pybricks code, up to behaviours picked by Jev">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://botbench.neorgon.com/">
+  <meta property="og:site_name" content="Neorgon">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Botbench | Robot Kit Simulator">
+  <meta name="twitter:description" content="Plan LEGO 51515 and EV3 31313 robot builds, rehearse them in a 2D simulator and export Pybricks code, up to behaviours picked by Jev">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://botbench.neorgon.com/">
+  <meta property="og:locale" content="en_US">
+  <meta name="theme-color" content="#040714">
+  <meta property="og:image" content="https://botbench.neorgon.com/og-preview.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Botbench">
+  <meta name="twitter:image" content="https://botbench.neorgon.com/og-preview.jpg">
+  <!-- Fleet design tokens: canonical, do not redeclare locally (docs/references/new-project-context.md, Design) -->
+  <link rel="stylesheet" href="https://cdn.neorgon.org/v1.0.0/styles/base.css">
+  <link rel="stylesheet" href="css/style.css">
+  <!-- template:styles -->
+  <!-- /template:styles -->
+  <!-- Neorgon Header Kit (vendored; ?header=live swaps CSS to CDN). Keep after style.css, the kit owns the header. -->
+  <script>(function(){var m=location.search.match(/[?&]theme=([\w-]+)/)||document.cookie.match(/(?:^|;\s*)neo_theme=([\w-]+)/);if(m&&m[1]!=='default')document.documentElement.dataset.theme=decodeURIComponent(m[1]);})();</script>
+  <link rel="stylesheet" href="css/neorgon-header.css">
+  <link rel="stylesheet" href="css/neorgon-themes.css">
+  <link rel="stylesheet" href="https://cdn.neorgon.org/v1.0.0/header/season.css">
+  <script defer src="js/neorgon-header.js"></script>
+  <!-- Neorgon Footer Kit (vendored). Pins the footer to the viewport floor on short
+       pages and builds the meta bar + back-to-top. See packages/neorgon-ui/footer/README.md.
+       Optional stamps: <meta name="neo-repo"|"neo-version"|"neo-updated"> -->
+  <link rel="stylesheet" href="css/neorgon-footer.css">
+  <script defer src="js/neorgon-footer.js"></script>
+  <!-- Neorgon Beacon Kit (vendored). Bottom-left correction reporter: it
+       carries page context to balise.neorgon.com in a URL fragment and the
+       visitor writes there. No form on this page and no request from it.
+       Opt out per page with <meta name="beacon" content="off">.
+       See packages/neorgon-ui/beacon/README.md. -->
+  <meta name="beacon-site" content="botbench-site">
+  <link rel="stylesheet" href="css/neorgon-beacon.css">
+  <script defer src="js/neorgon-beacon.js"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Botbench",
+    "description": "Plan LEGO 51515 and EV3 31313 robot builds, rehearse them in a 2D simulator and export Pybricks code, up to behaviours picked by Jev",
+    "url": "https://botbench.neorgon.com/",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "author": { "@type": "Organization", "name": "Neorgon", "url": "https://neorgon.com/" }
+  }
+  </script>
+</head>
+<body>
+
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- Neorgon Header Kit contract (packages/neorgon-ui/header/README.md).
+       data-header-mode: hub (glass) | content (sticky gradient) | app (slim, auto-hides on scroll).
+       Pick content for learning/content sites, app for tool-dense sites. -->
+  <header class="header-bar" data-header-mode="app">
+    <div class="header-logo">
+      <!-- PATTERN: one link: mark + name go to THIS site's home (root or #home)
+           so clicking either resets the view. The hub icon in .header-right
+           is the only header link to neorgon.com. -->
+      <a href="./" class="header-title-link">
+        <img src="energon-classic-logo.png" class="header-logo-img" alt="">
+        <div class="header-title-wrap">
+          <h1>Botbench</h1>
+          <div class="header-subtitle">Plan, simulate and program 51515 and EV3 robots</div>
+        </div>
+      </a>
+    </div>
+
+    <!-- .header-right owns margin-left:auto; home icon is always last. -->
+    <div class="header-right">
+      <!-- template:actions -->
+      <!-- Optional .header-actions: keep one primary control visible with
+           data-keep-mobile. Wrap text beside an SVG in <span>. -->
+      <!-- /template:actions -->
+
+      <!-- Accounts (only for a site with sign-in): the Neorgon Auth Kit renders a "Sign in"
+           button in this slot, and Clerk's avatar menu once signed in. It also owns the
+           sign-in dialog, so there is no panel or modal to write. Vendor it with
+           packages/neorgon-ui/sync-auth.sh (its header shows how to adopt one site), then add
+             <meta name="clerk-publishable-key" content="pk_live_...">
+             a stylesheet link to css/neorgon-auth.css (named in prose here, because the
+             smoke ref checker reads comments and this file does not exist until you vendor it)
+           to <head>, and in js/events.js:
+             import { NeoAuth } from './neorgon-auth.js';
+             NeoAuth.onChange(({ signedIn, label }) => ...); NeoAuth.start({ convex });
+           Contract, CSP and gated actions: packages/neorgon-ui/auth/README.md
+      <div class="neo-auth" data-neo-auth data-keep-mobile hidden></div>
+      -->
+
+      <a class="header-home" href="https://neorgon.com/" title="neorgon.com" aria-label="Neorgon home">
+        <svg class="nh-hub-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M12 4.4 18.58 8.2 18.58 15.8 12 19.6 5.42 15.8 5.42 8.2Z" fill="currentColor" stroke="none"/>
+          <g class="nh-orbit">
+            <path d="M2.47 17.50 A11.0 11.0 0 0 1 14.85 1.37" fill="none" stroke="currentColor" stroke-width="1.05" stroke-linecap="round"/>
+            <path d="M21.53 6.50 A11.0 11.0 0 0 1 9.15 22.63" fill="none" stroke="currentColor" stroke-width="1.05" stroke-linecap="round"/>
+            <circle cx="21.71" cy="6.84" r="1.25" fill="currentColor"/>
+            <circle cx="2.29" cy="17.16" r="1.25" fill="currentColor"/>
+          </g>
+        </svg>
+      </a>
+    </div>
+  </header>
+
+  <!-- template:main -->
+  <main id="main" tabindex="-1">
+    <div class="shell">
+      <nav class="shell__rail" aria-label="Workbench">
+        <a class="rail-link" href="#build" data-tab="build">Kit and build</a>
+        <a class="rail-link" href="#sim" data-tab="sim">Simulate</a>
+        <a class="rail-link" href="#projects" data-tab="projects">Projects</a>
+        <a class="rail-link" href="#paths" data-tab="paths">Paths and hardware</a>
+        <a class="rail-link" href="#export" data-tab="export">Export code</a>
+      </nav>
+
+      <div class="shell__main">
+        <section class="section panel" id="panel-build" data-panel="build" aria-labelledby="h-build">
+          <div class="section__titles">
+            <h2 class="section__title" id="h-build">Kit and build</h2>
+            <p class="section__lead">Say which boxes you own, pick a hub, and plug parts into its ports. The planner checks every port against the connector family and the parts you actually have, then shows what your kits can build.</p>
+          </div>
+          <fieldset class="group">
+            <legend>Your kits</legend>
+            <div id="kits" class="kit-grid"></div>
+          </fieldset>
+          <fieldset class="group">
+            <legend>Hub</legend>
+            <div id="hub-pick" class="seg" role="radiogroup" aria-label="Hub"></div>
+            <p id="hub-note" class="field__hint"></p>
+          </fieldset>
+          <div class="group">
+            <h3 class="group__title">Ports</h3>
+            <div id="ports" class="port-grid"></div>
+          </div>
+          <div class="group">
+            <h3 class="group__title">Drive geometry</h3>
+            <div id="drive" class="drive-grid"></div>
+          </div>
+          <div id="issues" class="issues" role="status" aria-live="polite"></div>
+          <div class="group">
+            <h3 class="group__title">What this build can do</h3>
+            <div id="caps" class="chips"></div>
+          </div>
+          <div class="group">
+            <h3 class="group__title">Possible combinations</h3>
+            <p class="field__hint">Each chassis type against each hub you own, counting only parts from that hub's connector family. Layouts counts the distinct ways to place the parts in the ports.</p>
+            <div class="table-wrap"><table class="matrix" id="matrix"></table></div>
+            <p id="cross-note" class="field__hint"></p>
+          </div>
+        </section>
+
+        <section class="section panel" id="panel-sim" data-panel="sim" aria-labelledby="h-sim" hidden>
+          <div class="section__titles">
+            <h2 class="section__title" id="h-sim">Simulate</h2>
+            <p class="section__lead">A top-down rehearsal of the current build: same ports, same wheel size, same sensors. Use it to tune values before the robot is in your hands, not as a promise of how the real one behaves.</p>
+          </div>
+          <div class="toolbar sim-bar">
+            <label class="mini-field"><span>Arena</span><select id="arena" class="select"></select></label>
+            <div class="seg" id="brain-kind" role="radiogroup" aria-label="Brain">
+              <button type="button" class="seg__btn" data-kind="rules" role="radio">Rules</button>
+              <button type="button" class="seg__btn" data-kind="modes" role="radio">Modes and decider</button>
+            </div>
+            <label class="mini-field" id="preset-wrap"><span>Preset</span><select id="preset" class="select"></select></label>
+            <span class="toolbar-gap"></span>
+            <button type="button" class="btn btn--primary" id="play">Run</button>
+            <button type="button" class="btn btn--secondary" id="step">Step</button>
+            <button type="button" class="btn btn--secondary" id="reset">Reset</button>
+            <label class="mini-field"><span>Speed</span><select id="speed" class="select"><option value="0.5">0.5x</option><option value="1">1x</option><option value="2">2x</option><option value="4">4x</option></select></label>
+          </div>
+          <div class="sim-layout">
+            <div class="sim-stage">
+              <canvas id="sim-canvas" aria-label="Simulator arena, top-down view" role="img"></canvas>
+              <p id="arena-note" class="field__hint"></p>
+            </div>
+            <aside class="sim-side" aria-label="Robot readout">
+              <div id="readout"></div>
+              <div id="decision"></div>
+            </aside>
+          </div>
+          <div id="rules-panel" class="group">
+            <h3 class="group__title">Rule table</h3>
+            <p class="field__hint">Checked top to bottom on every tick; the first rule that matches drives the motors. Hold keeps a rule running for that many milliseconds once it fires. Speeds are percent of top speed.</p>
+            <div id="rules"></div>
+            <button type="button" class="btn btn--secondary btn--sm" id="add-rule">Add rule</button>
+          </div>
+          <div id="modes-panel" class="group" hidden>
+            <h3 class="group__title">Goal and decider</h3>
+            <p class="field__hint">Every half second, code turns the sensor numbers into plain facts and asks which mode fits the goal. In the browser a local stand-in answers, because a TypeSafe key must never sit in a web page. The request shown beside the arena is what the bridge sends to Jev.</p>
+            <div class="field">
+              <label for="goal">Goal, in plain words</label>
+              <textarea id="goal" class="textarea" rows="2" maxlength="400"></textarea>
+            </div>
+            <div class="field">
+              <label for="gate">Confidence gate: <output id="gate-out" for="gate"></output></label>
+              <input id="gate" type="range" min="0" max="0.9" step="0.05">
+              <p class="field__hint">Below this confidence the robot keeps its current mode instead of switching. Low values flip-flop, high values commit late.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section panel" id="panel-projects" data-panel="projects" aria-labelledby="h-projects" hidden>
+          <div class="section__titles">
+            <h2 class="section__title" id="h-projects">Projects</h2>
+            <p class="section__lead">Seventeen projects in five levels, from one spinning motor to a robot that asks Jev what to do next. Each one is marked against your kits; the ones with a simulator setup load straight into the arena.</p>
+          </div>
+          <div id="projects"></div>
+        </section>
+
+        <section class="section panel" id="panel-paths" data-panel="paths" aria-labelledby="h-paths" hidden>
+          <div class="section__titles">
+            <h2 class="section__title" id="h-paths">Paths and hardware</h2>
+            <p class="section__lead">How to program each hub today, what to buy for each path, and where an AI decision layer fits without getting in the way of the motors.</p>
+          </div>
+          <div id="paths"></div>
+        </section>
+
+        <section class="section panel" id="panel-export" data-panel="export" aria-labelledby="h-export" hidden>
+          <div class="section__titles">
+            <h2 class="section__title" id="h-export">Export code</h2>
+            <p class="section__lead">The current build and brain as Pybricks MicroPython. Rules export as a loop on the hub. Modes export as a hub program that reports facts, plus a laptop bridge that asks Jev and sends back a mode.</p>
+          </div>
+          <div id="export"></div>
+        </section>
+      </div>
+    </div>
+  </main>
+  <!-- /template:main -->
+
+  <!-- Neorgon Footer Kit contract. data-footer-mode: minimal (default) | content | app.
+       Replace the copy with a real note (privacy, data provenance, disclaimer) or drop
+       the text entirely, the kit appends "Part of Neorgon" and any version stamps. -->
+  <footer class="neo-footer" data-footer-mode="app">
+    Everything runs in your browser and saves only to this device. LEGO, MINDSTORMS and Robot Inventor are LEGO Group trademarks; Botbench is not affiliated.
+  </footer>
+
+  <div id="app-toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

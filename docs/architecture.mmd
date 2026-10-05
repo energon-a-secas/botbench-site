@@ -1,0 +1,15 @@
+flowchart LR
+  subgraph Browser["botbench.neorgon.com (static, no backend)"]
+    CAT[catalog.js<br/>hubs, devices, kits] --> BUILD[build.js<br/>ports, validation, matrix]
+    BUILD --> SIM[sim.js + simview.js<br/>arena, kinematics, sensors]
+    BRAIN[brain.js<br/>rules, modes, facts,<br/>local stand-in] --> SIM
+    BUILD --> EXP[export.js]
+    BRAIN --> EXP
+    PROJ[projects.js<br/>ladder] --> SIM
+  end
+  EXP -->|hub program .py| HUB[Robot Inventor Hub<br/>or EV3, Pybricks]
+  EXP -->|bridge.py| BR[Laptop bridge<br/>API key lives here]
+  HUB -->|facts over BLE, 2 Hz| BR
+  BR -->|POST /v1/systemone| JEV[TypeSafe Jev]
+  JEV -->|choice + confidence| BR
+  BR -->|mode byte, if above gate| HUB
