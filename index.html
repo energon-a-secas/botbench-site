@@ -137,8 +137,10 @@
         <a class="rail-link" href="#build" data-tab="build">Kit and build</a>
         <a class="rail-link" href="#sim" data-tab="sim">Simulate</a>
         <a class="rail-link" href="#projects" data-tab="projects">Projects</a>
+        <a class="rail-link" href="#models" data-tab="models">Models and ideas</a>
         <a class="rail-link" href="#paths" data-tab="paths">Paths and hardware</a>
         <a class="rail-link" href="#export" data-tab="export">Export code</a>
+        <a class="rail-link" href="#link" data-tab="link">Link to the hub</a>
       </nav>
 
       <div class="shell__main">
@@ -229,9 +231,17 @@
         <section class="section panel" id="panel-projects" data-panel="projects" aria-labelledby="h-projects" hidden>
           <div class="section__titles">
             <h2 class="section__title" id="h-projects">Projects</h2>
-            <p class="section__lead">Seventeen projects in five levels, from one spinning motor to a robot that asks Jev what to do next. Each one is marked against your kits; the ones with a simulator setup load straight into the arena.</p>
+            <p class="section__lead">Eighteen projects in five levels, from one spinning motor to a robot that asks Jev what to do next. Each one is marked against your kits; the ones with a simulator setup load straight into the arena.</p>
           </div>
           <div id="projects"></div>
+        </section>
+
+        <section class="section panel" id="panel-models" data-panel="models" aria-labelledby="h-models" hidden>
+          <div class="section__titles">
+            <h2 class="section__title" id="h-models">Models and ideas</h2>
+            <p class="section__lead">Builds other people have published with instructions, so you can replicate them instead of starting from a pile of beams, and ideas that go past the box. Each model names its kit, its programming path, and what you would need beyond the box. Links go to the source; nothing is copied here.</p>
+          </div>
+          <div id="models"></div>
         </section>
 
         <section class="section panel" id="panel-paths" data-panel="paths" aria-labelledby="h-paths" hidden>
@@ -248,6 +258,65 @@
             <p class="section__lead">The current build and brain as Pybricks MicroPython. Rules export as a loop on the hub. Modes export as a hub program that reports facts, plus a laptop bridge that asks Jev and sends back a mode.</p>
           </div>
           <div id="export"></div>
+        </section>
+
+        <section class="section panel" id="panel-link" data-panel="link" aria-labelledby="h-link" hidden>
+          <div class="section__titles">
+            <h2 class="section__title" id="h-link">Link to the hub</h2>
+            <p class="section__lead">Connect to a Robot Inventor Hub running Pybricks from this page, over Bluetooth LE. Watch what it senses, switch its mode, drive it by hand, or let the stand-in decider pick. Try it on the virtual hub first: that is the simulator answering exactly as the exported program would.</p>
+          </div>
+          <div class="toolbar sim-bar">
+            <div class="seg" id="link-source" role="radiogroup" aria-label="Hub">
+              <button type="button" class="seg__btn" data-source="virtual" role="radio">Virtual hub</button>
+              <button type="button" class="seg__btn" data-source="ble" role="radio">Bluetooth hub</button>
+            </div>
+            <button type="button" class="btn btn--primary" id="link-connect">Connect</button>
+            <button type="button" class="btn btn--secondary" id="link-start" disabled>Start program</button>
+            <button type="button" class="btn btn--secondary" id="link-stop" disabled>Stop</button>
+          </div>
+          <p id="link-status" class="field__hint" role="status" aria-live="polite"></p>
+          <p id="link-requirements" class="issue issue--warn" hidden></p>
+          <div class="link-layout">
+            <div class="group">
+              <h3 class="group__title">What the hub reports</h3>
+              <div id="link-facts"></div>
+            </div>
+            <div class="group">
+              <h3 class="group__title">Drive by hand</h3>
+              <div id="teleop" class="pad" tabindex="0" role="group" aria-label="Teleop pad. With the pad focused, arrow keys or W A S D drive and release stops."></div>
+              <p class="field__hint">Click the pad, then hold an arrow key or W A S D. Letting go stops. Each press is one byte to the hub.</p>
+            </div>
+            <div class="group">
+              <h3 class="group__title">Mode</h3>
+              <div id="link-modes" class="toolbar"></div>
+              <label class="check"><input type="checkbox" id="link-auto" disabled> Let the stand-in decider pick the mode, with the goal and gate from Simulate</label>
+              <div id="link-decision"></div>
+            </div>
+          </div>
+          <details class="sheet" id="link-output">
+            <summary>Hub output</summary>
+            <div class="sheet__inner">
+              <pre id="link-log" class="log" aria-live="off"></pre>
+              <button type="button" class="btn btn--ghost btn--sm" id="link-clear">Clear</button>
+            </div>
+          </details>
+          <details class="sheet">
+            <summary>Experimental: send the exported program through the REPL</summary>
+            <div class="sheet__inner stack stack--tight">
+              <p class="field__hint">Pybricks Code compiles a program before sending it; this page cannot, so it starts the hub's REPL and pastes the source line by line, pacing on the echo. Written from the Pybricks profile and MicroPython's paste mode, not yet tried on a real hub. If it fails, the Hub output above says how, and Pybricks Code remains the reliable way.</p>
+              <button type="button" class="btn btn--secondary btn--sm" id="link-run-btn" disabled>Send the modes program to the REPL and run it</button>
+            </div>
+          </details>
+          <div class="group">
+            <h3 class="group__title">How a real hub gets here</h3>
+            <ol class="plain plain--steps">
+              <li>Flash Pybricks on the Inventor Hub from <a href="https://code.pybricks.com/" target="_blank" rel="noopener">code.pybricks.com</a> (Chrome or Edge; it can restore the LEGO firmware later).</li>
+              <li>On Export code, pick the modes brain and copy the hub program. Paste it into Pybricks Code and run it once, so the hub keeps it.</li>
+              <li>Disconnect Pybricks Code. Pick Bluetooth hub here, Connect, choose the hub, then Start program.</li>
+              <li>For Jev instead of the stand-in, run <code>bridge.py</code> from the Export tab on a laptop with your key; the page cannot call Jev.</li>
+            </ol>
+            <p class="field__hint">The EV3 brick has no Bluetooth LE, so this tab cannot reach it. Its modes program picks modes with the brick buttons instead.</p>
+          </div>
         </section>
       </div>
     </div>

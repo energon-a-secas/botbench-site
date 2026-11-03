@@ -3,6 +3,7 @@
 // through onUpdate, throttled so the panel is not re-rendered every frame.
 import { W, H, createWorld, createRobot, sense, stepRobot, mounts } from './sim.js';
 import { ruleRunner, MODES, facts, localDecide, gate, jevRequest } from './brain.js';
+import { factsLine, codeToMode, TELEOP } from './link.js';
 
 const STEP = 1 / 60;
 const DECIDE_EVERY_MS = 500;
@@ -13,6 +14,10 @@ export function createSimView(canvas, { onUpdate }) {
   let running = false, speed = 1, tMs = 0, acc = 0, lastFrame = 0, lastEmit = 0;
   let runner = null, modeRunners = {}, mode = 'explore', modeSince = 0, decision = null;
   let reading = null, ruleIdx = -1, cmd = { left: 0, right: 0 }, crossed = false;
+  // While a hub is attached the simulator behaves like the exported program:
+  // it prints a facts line twice a second and takes mode and teleop bytes on
+  // stdin instead of deciding for itself.
+  let hub = null, teleop = null, nextReport = 0;
   let accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#6ee7b7';
 
   function load({ build, arenaId, brain: b }) {
@@ -20,12 +25,28 @@ export function createSimView(canvas, { onUpdate }) {
     robot = createRobot(build, world);
     brain = b;
     tMs = 0; acc = 0; modeSince = 0; decision = null; ruleIdx = -1; cmd = { left: 0, right: 0 }; crossed = false;
+    teleop = null; nextReport = 0;
     runner = b.kind === 'rules' ? ruleRunner(b.rules) : null;
     modeRunners = Object.fromEntries(Object.keys(MODES).map((k) => [k, ruleRunner(MODES[k].rules)]));
     mode = b.startMode || 'explore';
     reading = sense(robot, world);
     resize();
     emit(true);
+  }
+
+  function setRunning(next) {
+    if (running === next) return;
+    running = next;
+    hub?.onStatus(running);
+  }
+
+  /** Bytes a connected page wrote to the virtual hub's stdin. */
+  function hubWrite(text) {
+    for (const ch of text) {
+      const m = codeToMode(ch);
+      if (m) { if (m !== mode) { mode = m; modeSince = tMs; } teleop = null; continue; }
+      if (TELEOP[ch]) { teleop = TELEOP[ch].drive; mode = 'teleop'; modeSince = tMs; }
+    }
   }
 
   function decide() {
@@ -40,7 +61,16 @@ export function createSimView(canvas, { onUpdate }) {
   function tick() {
     reading = sense(robot, world);
     if (reading.reflection != null && reading.reflection < 65) crossed = true;
-    if (brain.kind === 'rules') {
+    if (hub) {
+      if (tMs >= nextReport) {
+        const f = facts(reading, mode, (tMs - modeSince) / 1000, crossed);
+        crossed = false;
+        hub.onStdout(factsLine(f, mode) + '\n');
+        nextReport = tMs + DECIDE_EVERY_MS;
+      }
+      const out = mode === 'teleop' ? { cmd: { left: teleop?.[0] || 0, right: teleop?.[1] || 0 } } : modeRunners[mode](reading, tMs);
+      cmd = out.cmd; ruleIdx = -1; decision = null;
+    } else if (brain.kind === 'rules') {
       const out = runner(reading, tMs);
       cmd = out.cmd; ruleIdx = out.rule;
     } else {
@@ -68,7 +98,7 @@ export function createSimView(canvas, { onUpdate }) {
     const now = performance.now();
     if (!force && now - lastEmit < 120) return;
     lastEmit = now;
-    onUpdate({ tMs, reading, ruleIdx, cmd, mode, decision, odoMm: robot.odoMm, canDrive: robot.canDrive, running });
+    onUpdate({ tMs, reading, ruleIdx, cmd, mode, decision, odoMm: robot.odoMm, canDrive: robot.canDrive, running, hub: !!hub });
   }
 
   function resize() {
@@ -146,9 +176,12 @@ export function createSimView(canvas, { onUpdate }) {
 
   return {
     load,
-    play() { if (running || !robot.canDrive) return; running = true; lastFrame = 0; requestAnimationFrame(frame); emit(true); },
-    pause() { running = false; emit(true); },
-    stepOnce() { running = false; for (let i = 0; i < 6; i++) tick(); draw(); emit(true); },
+    play() { if (running || !robot.canDrive) return; setRunning(true); lastFrame = 0; requestAnimationFrame(frame); emit(true); },
+    pause() { setRunning(false); emit(true); },
+    stepOnce() { setRunning(false); for (let i = 0; i < 6; i++) tick(); draw(); emit(true); },
+    attachHub(h) { hub = h; teleop = null; nextReport = tMs; if (mode === 'teleop') mode = 'explore'; emit(true); },
+    detachHub() { hub = null; if (mode === 'teleop') { mode = 'explore'; teleop = null; } emit(true); },
+    hubWrite,
     setSpeed(x) { speed = x; },
     resize() { if (world) resize(); },
     get running() { return running; },

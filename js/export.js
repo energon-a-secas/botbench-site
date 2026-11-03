@@ -6,6 +6,7 @@
 import { HUBS, DEVICES } from './catalog.js';
 import { sensorPort } from './build.js';
 import { MODES, jevRequest, facts } from './brain.js';
+import { MODE_CODES, TELEOP } from './link.js';
 
 const PY_COLOR = { black: 'BLACK', white: 'WHITE', red: 'RED', green: 'GREEN', blue: 'BLUE', yellow: 'YELLOW' };
 const num = (v) => (Number.isFinite(Number(v)) ? String(Math.round(Number(v) * 100) / 100) : '0');
@@ -114,7 +115,7 @@ export function rulesProgram(build, rules) {
   return lines.join('\n') + '\n';
 }
 
-const CODE = { follow_line: 'f', explore: 'e', avoid: 'a', stop: 's' };
+const CODE = MODE_CODES;
 
 function factsFn(build) {
   const L = ['def facts_line():'];
@@ -127,18 +128,23 @@ function factsFn(build) {
   L.push(sensorPort(build, 'touch')
     ? '    bump = "pressed" if bumper.pressed() else "not pressed"'
     : '    bump = "no touch sensor"');
-  L.push('    return "front=" + front + ";floor=" + floor + ";bumper=" + bump + "\\n"');
+  L.push('    return "front=" + front + ";floor=" + floor + ";bumper=" + bump + ";mode=" + mode_name + "\\n"');
   L.push('');
   return L;
 }
 
-/** Hub program for the modes brain: reports facts, takes a mode byte. */
+/**
+ * Hub program for the modes brain: reports facts twice a second, takes a
+ * mode letter or a teleop digit on stdin. The Link tab and bridge.py both
+ * speak to this program; the virtual hub in the simulator imitates it.
+ */
 export function modesProgram(build) {
   const lines = header(build);
   if (build.hub === 'ev3') {
-    lines.push('# The EV3 path: Pybricks for EV3 has no Nordic UART link to a laptop.');
-    lines.push('# Run the bridge on the brick itself under ev3dev (Wi-Fi dongle) or pick');
-    lines.push('# modes locally. This program prints facts so you can watch them over SSH.', '');
+    lines.push('# The EV3 path: this brick has no Bluetooth LE, so neither the Link tab');
+    lines.push('# nor bridge.py can reach it. It prints facts so you can watch them in');
+    lines.push('# Pybricks Code or over SSH, and picks modes with the hub buttons.', '');
+    lines.push('from pybricks.parameters import Button', '');
   } else {
     lines.push('from usys import stdin, stdout');
     lines.push('from uselect import poll', '');
@@ -151,8 +157,13 @@ export function modesProgram(build) {
     lines.push(...actionBody(m.rules[0]));
     lines.push('');
   }
-  lines.push(`CODES = {${Object.entries(CODE).map(([k, c]) => `b"${c}": mode_${k}`).join(', ')}}`);
-  lines.push('run_mode = mode_explore');
+  lines.push('def mode_teleop():');
+  lines.push('    drive(teleop[0], teleop[1])');
+  lines.push('');
+  lines.push(`CODES = {${Object.entries(CODE).map(([k, c]) => `b"${c}": (mode_${k}, "${k}")`).join(', ')}}`);
+  lines.push(`TELEOP = {${Object.entries(TELEOP).map(([d, t]) => `b"${d}": (${t.drive[0]}, ${t.drive[1]})`).join(', ')}}`);
+  lines.push('run_mode, mode_name = mode_explore, "explore"');
+  lines.push('teleop = (0, 0)');
   lines.push('crossed = False  # latched between reports: a thin line passes in a tenth of a second');
   lines.push('watch = StopWatch()');
   lines.push('next_report = 0', '');
@@ -163,7 +174,20 @@ export function modesProgram(build) {
   lines.push('        next_report = now + 500');
   if (build.hub !== 'ev3') {
     lines.push('    if keyboard.poll(0):');
-    lines.push('        run_mode = CODES.get(stdin.buffer.read(1), run_mode)');
+    lines.push('        key = stdin.buffer.read(1)');
+    lines.push('        if key in CODES:');
+    lines.push('            run_mode, mode_name = CODES[key]');
+    lines.push('        elif key in TELEOP:');
+    lines.push('            teleop = TELEOP[key]');
+    lines.push('            run_mode, mode_name = mode_teleop, "teleop"');
+  } else {
+    lines.push('    pressed = hub.buttons.pressed()');
+    lines.push('    if Button.LEFT in pressed:');
+    lines.push('        run_mode, mode_name = mode_follow_line, "follow_line"');
+    lines.push('    elif Button.RIGHT in pressed:');
+    lines.push('        run_mode, mode_name = mode_explore, "explore"');
+    lines.push('    elif Button.DOWN in pressed:');
+    lines.push('        run_mode, mode_name = mode_stop, "stop"');
   }
   if (sensorPort(build, 'color')) {
     lines.push('    if color.reflection() < 65:');
@@ -241,12 +265,19 @@ async def main():
         sys.exit("Hub not found. Disconnect Pybricks Code and make sure no program is running.")
     async with BleakClient(device) as client:
         await client.start_notify(PYBRICKS_COMMAND_EVENT_CHAR_UUID, handle_rx)
-        print("Connected. Start the program on the hub with its button.")
+        try:  # start the program the hub holds (profile 1.2+); fails harmlessly if it is already running
+            await client.write_gatt_char(PYBRICKS_COMMAND_EVENT_CHAR_UUID, b"\\x01", response=True)
+        except Exception:
+            pass
+        print("Connected. If the program did not start, press the hub button.")
         while True:
             line = await lines.get()
             while not lines.empty():  # act on the freshest facts only
                 line = lines.get_nowait()
             robot = dict(kv.split("=", 1) for kv in line.split(";") if "=" in kv)
+            reported = robot.pop("mode", None)  # the hub's own word on what it is running
+            if reported and reported != mode:
+                mode, since = reported, time.monotonic()
             robot["current_mode"] = mode
             robot["time_in_mode"] = bucket(time.monotonic() - since)
             answers = await asyncio.to_thread(ask_jev, robot)

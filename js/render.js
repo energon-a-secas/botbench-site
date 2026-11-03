@@ -185,7 +185,7 @@ export function renderExport(s) {
     if (s.hub === 'inventor') files.push({ name: 'bridge.py', title: 'Laptop bridge (Jev)', code: bridgeScript(s.brain.goal, s.brain.gateMin) });
   }
   $('export').innerHTML = `${issues.length ? `<p class="issue issue--error">The build has ${issues.length} port problem${issues.length > 1 ? 's' : ''}; fix them on Kit and build before flashing this.</p>` : ''}
-    <p class="field__hint">Brain: ${s.brain.kind === 'rules' ? 'rule table' : 'modes and decider'} on the ${escHtml(HUBS[s.hub].name)}. Switch either on the Simulate tab.</p>
+    <p class="field__hint">Brain: ${s.brain.kind === 'rules' ? 'rule table' : 'modes and decider'} on the ${escHtml(HUBS[s.hub].name)}. Switch either on the Simulate tab. Paste the hub program into <a href="https://code.pybricks.com/" target="_blank" rel="noopener">Pybricks Code</a> to load it; ${s.brain.kind === 'modes' && s.hub === 'inventor' ? 'the modes program then answers the <a href="#link">Link</a> tab and bridge.py' : 'the modes brain adds a program the <a href="#link">Link</a> tab can drive'}.</p>
     ${files.map((f, i) => `<div class="code-block">
       <div class="code-block__bar"><strong>${escHtml(f.title)}</strong><span class="muted">${escHtml(f.name)}</span>
         <span class="toolbar-gap"></span>

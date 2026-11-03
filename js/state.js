@@ -6,7 +6,7 @@ import { ARENAS } from './sim.js';
 
 const store = createStore({ key: 'botbench-site:workbench', version: 1 });
 
-export const TABS = ['build', 'sim', 'projects', 'paths', 'export'];
+export const TABS = ['build', 'sim', 'projects', 'models', 'paths', 'export', 'link'];
 
 export const state = {
   tab: 'build',
@@ -16,6 +16,7 @@ export const state = {
   arena: 'oval',
   brain: { kind: 'rules', preset: 'line-p', rules: structuredClone(PRESETS['line-p'].rules), goal: 'Follow the line and stop on the red patch. Get around any box in the way.', gateMin: 0.25 },
   speed: 1,
+  linkSource: 'virtual',
   sim: null, // runtime: the last onUpdate snapshot, never saved
   exportFiles: [], // runtime: what the Export tab last rendered
 };
@@ -75,10 +76,11 @@ export function loadSaved(s) {
     s.brain.gateMin = numIn(b.gateMin, 0, 1, s.brain.gateMin);
     s.brain.preset = PRESETS[b.preset] ? b.preset : 'custom';
   }
+  if (['virtual', 'ble'].includes(saved.linkSource)) s.linkSource = saved.linkSource;
 }
 
 /** false means this session works, but the workbench could not be saved. */
 export function save(s) {
-  const { owned, hub, builds, arena, brain } = s;
-  return store.save({ owned, hub, builds, arena, brain });
+  const { owned, hub, builds, arena, brain, linkSource } = s;
+  return store.save({ owned, hub, builds, arena, brain, linkSource });
 }

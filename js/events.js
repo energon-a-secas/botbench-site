@@ -5,11 +5,14 @@ import { PRESETS, SENSORS, newRule } from './brain.js';
 import { PROJECTS } from './projects.js';
 import { state, build, save, TABS } from './state.js';
 import { renderTabs, renderBuild, renderProjects, renderExport } from './render.js';
+import { renderModels } from './models-panel.js';
 import { renderSimControls, renderRules, renderReadout } from './simpanel.js';
 import { createSimView } from './simview.js';
+import { createLinkPanel } from './linkpanel.js';
 import { $, debounce, showToast, copyText, downloadText } from './utils.js';
 
 let sim = null;
+let linkPanel = null;
 
 function persist(s) {
   if (!save(s) && !persist.warned) { persist.warned = true; showToast('This browser is not saving: changes last for this visit only.'); }
@@ -27,7 +30,9 @@ function showTab(s, tab) {
   renderTabs(s);
   if (tab === 'sim') { sim.resize(); renderRules(s); }
   if (tab === 'projects') renderProjects(s);
+  if (tab === 'models') renderModels(s);
   if (tab === 'export') renderExport(s);
+  if (tab === 'link') linkPanel.render();
 }
 
 /** Anything that changes the build reaches every view that reads it. */
@@ -176,6 +181,7 @@ export function bindEvents(s) {
   sim = createSimView($('sim-canvas'), { onUpdate: (u) => { state.sim = u; renderReadout(s, u); } });
   sim.setSpeed(s.speed);
   reloadSim(s);
+  linkPanel = createLinkPanel(s, sim, () => persist(s));
   bindBuild(s); bindSim(s); bindProjects(s); bindExport(s);
   window.addEventListener('hashchange', () => showTab(s, location.hash.slice(1)));
   showTab(s, s.tab);

@@ -34,6 +34,9 @@ export const PROJECTS = [
   { id: 'colours', level: 2, title: 'Say the colour', hub: 'either', needs: { color: 1 }, sim: null,
     teaches: 'ColorSensor.color() versus reflection(), and how lighting changes both.',
     steps: ['Hold coloured bricks under the sensor and print the reading.', 'Speak or display the colour name.', 'Try it near a window and under a lamp: note what breaks.'] },
+  { id: 'teleop', level: 2, title: 'Drive it from the browser', hub: 'inventor', needs: { motor: 2 }, sim: null,
+    teaches: 'Bluetooth LE from a web page: the Link tab sends one byte per key, the hub turns it into motor speeds and reports what it sees.',
+    steps: ['Export the modes program and load it with Pybricks Code once.', 'Disconnect Pybricks Code, open the Link tab, pick Bluetooth hub, Connect, Start program.', 'Click the pad and hold an arrow key; watch the facts change as you drive at a wall.', 'Try the virtual hub first if the robot is not built yet: same tab, no hardware.'] },
   { id: 'line-bang', level: 2, title: 'Line follower, on/off', hub: 'either', needs: { motor: 2, color: 1 }, sim: { arena: 'oval', brain: 'line-bang' },
     teaches: 'The simplest controller there is. It works, and it wobbles.',
     steps: ['Mount the colour sensor facing down, 1-2 studs above a dark line on light paper.', 'Dark: turn one way. Light: turn the other.', 'Find the speed at which it falls off the curve.'] },
@@ -60,7 +63,7 @@ export const PROJECTS = [
 
   { id: 'jev-modes', level: 5, title: 'Jev picks the mode', hub: 'inventor', needs: { motor: 2, color: 1, distance: 1 }, sim: { arena: 'mixed', brain: 'modes' },
     teaches: 'Keep control loops on the hub and let a typed Choice question pick the behaviour, gated by confidence.',
-    steps: ['Export the Modes program and the bridge from the Export tab.', 'Run the bridge with --dry-run first: it prints the exact request.', 'Add TYPESAFE_API_KEY and give it a goal in plain words.', 'Lower the confidence gate and watch it flip-flop; raise it and watch it commit.'] },
+    steps: ['Export the modes program and the bridge from the Export tab.', 'Rehearse the loop on the Link tab with the stand-in decider: same facts, same bytes, no key.', 'Run the bridge with --dry-run first: it prints the exact request.', 'Add TYPESAFE_API_KEY and give it a goal in plain words.', 'Lower the confidence gate and watch it flip-flop; raise it and watch it commit.'] },
   { id: 'jev-commands', level: 5, title: 'Typed commands in plain words', hub: 'inventor', needs: { motor: 2 }, sim: null,
     teaches: 'Intent routing: a sentence becomes one of a fixed set of actions, or "unclear".',
     steps: ['In the bridge, read a line from the keyboard instead of the hub.', 'Ask a Choice with options like forward, turn_left, dance, stop, unclear.', 'Send the mode byte. Unclear asks again rather than guessing.'] },

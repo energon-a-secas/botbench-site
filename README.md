@@ -32,9 +32,11 @@ Plan LEGO 51515 and EV3 31313 robot builds, rehearse them in a 2D simulator and 
 
 Botbench is a workbench for the two LEGO robot kits most people still have in a cupboard: Robot Inventor
 (51515) and EV3 Home Edition (31313). Tick the boxes you own, plug parts into a hub's ports, and it tells
-you what that build can do, rehearses it in a top-down simulator, and writes the Pybricks MicroPython to run
-it. The top of the ladder adds a decision layer: a laptop bridge asks TypeSafe's Jev which behaviour fits a
-goal written in plain words, while the motors stay under the hub's own control loops.
+you what that build can do, rehearses it in a top-down simulator, writes the Pybricks MicroPython to run
+it, and then connects to the real Inventor Hub over Web Bluetooth so you can watch it sense, drive it by
+hand and switch its behaviour from the page. The top of the ladder adds a decision layer: a laptop bridge
+asks TypeSafe's Jev which behaviour fits a goal written in plain words, while the motors stay under the
+hub's own control loops.
 
 **Live:** botbench.neorgon.com
 
@@ -48,7 +50,9 @@ goal written in plain words, while the motors stay under the hub's own control l
 - **Rule table brain** -- if-sensor-then-motors rules with hold timers and a proportional line follower; edit values while it runs
 - **Modes and decider** -- follow line, explore, avoid, stop, picked twice a second from plain-language facts by a local stand-in, gated by confidence, with the exact Jev request shown beside the arena
 - **Export** -- Pybricks programs for either hub, plus `bridge.py` (bleak over Bluetooth LE, HTTPS to Jev, key kept on the laptop)
-- **Project ladder** -- 17 projects in five levels, each marked against your kits, the simulatable ones loading straight into the arena
+- **Link to the hub** -- Web Bluetooth to an Inventor Hub running Pybricks: live facts, a teleop pad (keys or buttons, one byte each), mode buttons, the stand-in decider as a browser-side bridge, and the hub's raw output; a virtual hub runs the same protocol against the simulator so the whole tab works with no hardware
+- **Project ladder** -- 18 projects in five levels, each marked against your kits, the simulatable ones loading straight into the arena
+- **Models and ideas** -- published builds with instructions for either kit, and ideas past the box, each marked against the kits you own and split into what the arena can rehearse and what only the real robot can tell you
 - **Paths and hardware** -- firmware options per hub and what to buy for each path: microSD, Wi-Fi dongle, Raspberry Pi Build HAT, an API key
 
 ---
@@ -58,7 +62,8 @@ goal written in plain words, while the motors stay under the hub's own control l
 | Layer | Runs on | Rate | Does |
 |---|---|---|---|
 | Control loops | the hub | ~100 Hz | line following, avoiding, stopping |
-| Facts | the hub | 2 Hz | turns readings into categories: `front=blocked;floor=line edge` |
+| Facts | the hub | 2 Hz | turns readings into categories: `front=blocked;floor=line edge;mode=explore` |
+| Link tab | this page, Chromium | 2 Hz | the same facts over Web Bluetooth; teleop and mode bytes back; the stand-in decider, never Jev |
 | Bridge | laptop or Raspberry Pi | 2 Hz | reads facts over BLE, holds the API key |
 | Jev | TypeSafe API | per call | one Choice question picks the mode, one Noul asks if the goal is met |
 | Gate | the bridge | per call | switches only above a confidence threshold, sends one byte back |
@@ -70,6 +75,18 @@ latched between reports because a 22 mm line passes under the sensor in a tenth 
 The browser never calls Jev: there is no CORS story and a key must not ship in a static page. The
 simulator's decider is a hand-weighted local stand-in that imitates the answer's shape, labelled as such.
 
+## The hub link
+
+The Link tab speaks the Pybricks BLE profile directly (service `c5f50001-…`, the command/event
+characteristic, `WRITE_STDIN` 0x06 out, `WRITE_STDOUT` 0x01 in, `START_USER_PROGRAM` 0x01), which is the
+same channel Pybricks' own "hub to PC" tutorial uses. The program still gets onto the hub through Pybricks
+Code, because compiling MicroPython in the browser is a build this site does not carry; an experimental
+button pastes the source into the hub's REPL instead, paced on the echo, and is marked as untried on
+hardware. Web Bluetooth exists in Chrome and Edge only, over https or localhost.
+
+The virtual hub is the simulator attached to the same link: it prints the same facts line and takes the same
+bytes, so the tab, the decider and the teleop pad can be tried before a hub is in the room.
+
 ---
 
 ## Running locally
@@ -80,7 +97,7 @@ ES modules require an HTTP server (not `file://`):
 make serve
 ```
 
-Tests over the pure modules (build, brain, export):
+Tests over the pure modules (build, brain, export, the link protocol):
 
 ```bash
 node --test test/*.test.mjs
@@ -103,8 +120,12 @@ botbench-site/
 │   ├── brain.js        # Rule runner, modes, facts, the Jev request, the local stand-in
 │   ├── sim.js          # Arenas, kinematics, sensor models (no drawing)
 │   ├── simview.js      # Canvas, clock, brain-in-the-loop
-│   ├── export.js       # Pybricks programs and the Jev bridge
+│   ├── export.js       # Pybricks programs (rules, modes with teleop) and the Jev bridge
+│   ├── link.js         # Pybricks BLE profile, facts line, link over a transport; BLE and virtual transports
+│   ├── linkpanel.js    # The Link tab
 │   ├── projects.js     # The project ladder
+│   ├── models.js       # Published models and bigger ideas, with sources
+│   ├── models-panel.js # The Models and ideas tab
 │   ├── state.js        # Workbench state, validated persistence
 │   ├── render.js       # Build, projects, paths, export panels
 │   ├── simpanel.js     # Simulator controls, readout, rule editor

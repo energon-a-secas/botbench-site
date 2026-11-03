@@ -57,6 +57,14 @@ export function markActiveRule(idx) {
 
 const fmt = (v, unit = '') => (v === null || v === undefined ? '<span class="muted">none</span>' : `${escHtml(String(v))}${unit}`);
 
+/** Probability bars for a Choice answer, the current mode marked. */
+export function decisionBars(answer, current) {
+  return Object.entries(answer.probabilities).sort((a, b) => b[1] - a[1]).map(([k, p]) => `<li class="bar${k === current ? ' is-current' : ''}">
+    <span class="bar__label">${escHtml(MODES[k]?.label || k)}</span>
+    <span class="bar__track"><span class="bar__fill" style="width:${(p * 100).toFixed(1)}%"></span></span>
+    <span class="bar__val">${p.toFixed(2)}</span></li>`).join('');
+}
+
 export function renderReadout(s, u) {
   if (!u) return;
   const r = u.reading;
@@ -74,6 +82,12 @@ export function renderReadout(s, u) {
       <dt>Heading</dt><dd>${r.heading} deg</dd>
       <dt>Motors</dt><dd>L ${Math.round(u.cmd.left)} %, R ${Math.round(u.cmd.right)} %</dd>
     </dl>`;
+  if (u.hub) {
+    const label = u.mode === 'teleop' ? 'driven by hand' : MODES[u.mode]?.label || u.mode;
+    $('decision').innerHTML = `<p class="decision__mode">Virtual hub: <strong>${escHtml(label)}</strong></p><p class="field__hint">The Link tab is attached and runs this robot as the exported program would. Its own brain is paused until you disconnect there.</p>`;
+    markActiveRule(-1);
+    return;
+  }
   if (s.brain.kind === 'rules') {
     $('decision').innerHTML = `<p class="field__hint">${u.ruleIdx >= 0 ? `Rule ${u.ruleIdx + 1} is driving.` : 'No rule matches: motors off.'}</p>`;
     markActiveRule(u.ruleIdx);
@@ -82,14 +96,10 @@ export function renderReadout(s, u) {
   const d = u.decision;
   if (!d) { $('decision').innerHTML = ''; return; }
   const wasOpen = $('decision').querySelector('details')?.open;
-  const bars = Object.entries(d.answer.probabilities).sort((a, b) => b[1] - a[1]).map(([k, p]) => `<li class="bar${k === u.mode ? ' is-current' : ''}">
-    <span class="bar__label">${escHtml(MODES[k].label)}</span>
-    <span class="bar__track"><span class="bar__fill" style="width:${(p * 100).toFixed(1)}%"></span></span>
-    <span class="bar__val">${p.toFixed(2)}</span></li>`).join('');
   $('decision').innerHTML = `<div class="decision">
     <p class="decision__mode">Mode: <strong>${escHtml(MODES[u.mode].label)}</strong></p>
     <p class="field__hint">Local stand-in answer, confidence ${d.answer.confidence.toFixed(2)}${d.gated ? ', under the gate, so the mode holds' : ''}.</p>
-    <ul class="bars" aria-label="Mode probabilities">${bars}</ul>
+    <ul class="bars" aria-label="Mode probabilities">${decisionBars(d.answer, u.mode)}</ul>
     <dl class="readout readout--facts">${Object.entries(d.facts).map(([k, v]) => `<dt>${escHtml(k.replace(/_/g, ' '))}</dt><dd>${escHtml(v)}</dd>`).join('')}</dl>
     <details class="sheet"${wasOpen ? ' open' : ''}><summary>Request the bridge would send to Jev</summary><div class="sheet__inner"><pre><code>${escHtml(JSON.stringify(d.request, null, 2))}</code></pre></div></details>
   </div>`;
