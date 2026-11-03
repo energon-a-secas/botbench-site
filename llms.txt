@@ -1,0 +1,40 @@
+# Botbench
+
+> Plan LEGO 51515 (Robot Inventor) and 31313 (EV3) robot builds, rehearse them in a 2D simulator, export Pybricks programs, and drive a real Inventor hub from the browser. Free, no account, nothing leaves the browser except the optional Bluetooth link.
+
+Use this site to decide what a given pair of kits can build, to try a behaviour before flashing it, and to hand a coding agent the exact program and protocol a hub will run.
+
+## Tabs (one page, hash routed)
+
+- Build: https://botbench.neorgon.com/#build (kits, ports, the combination matrix and the validator)
+- Simulate: https://botbench.neorgon.com/#sim (2D arena, a rule-table brain and a modes brain, a local stand-in for the Jev decider)
+- Projects: https://botbench.neorgon.com/#projects (eighteen projects from first motor to two robots)
+- Models and ideas: https://botbench.neorgon.com/#models (official LEGO builds, Pybricks examples, community builds, books, hardware; links only, instructions are never copied; sources checked 2026-11-03)
+- Paths: https://botbench.neorgon.com/#paths (firmware paths per kit and the hardware each one needs)
+- Export: https://botbench.neorgon.com/#export (Pybricks programs for InventorHub and EV3Brick, plus bridge.py for Jev)
+- Link: https://botbench.neorgon.com/#link (Web Bluetooth to a Pybricks hub, or a virtual hub that is the simulator)
+
+## Data an agent can read directly
+
+Plain ES modules, no build step:
+
+- Kits, ports, firmware paths and hardware extras, with source URLs: https://botbench.neorgon.com/js/catalog.js
+- The project ladder: https://botbench.neorgon.com/js/projects.js
+- The models catalogue and the bigger ideas: https://botbench.neorgon.com/js/models.js
+- Facts, the local decider and the exact Jev request shape (TypeSafe systemone, model jev-latest): https://botbench.neorgon.com/js/brain.js
+- Program generators (rulesProgram, modesProgram, bridgeScript): https://botbench.neorgon.com/js/export.js
+- The hub protocol and the Web Bluetooth transport: https://botbench.neorgon.com/js/link.js
+
+## The hub protocol
+
+- The exported modes program prints one line twice a second: `front=…;floor=…;bumper=…;mode=…`. Sensor numbers become categories on the hub, so a language decider never sees raw numbers.
+- Stdin selects a mode with one letter (f follow_line, e explore, a avoid, s stop) and drives by hand with the digits 8 2 4 6 7 9, 5 to stop.
+- The link speaks the Pybricks BLE profile (service c5f50001-8280-46da-89f4-6d8051e4aeef) from Chrome or Edge over https. Firmware before Pybricks 4.0 holds one connection, so Pybricks Code must disconnect first.
+- The EV3 brick has no Bluetooth LE: the Link tab and bridge.py reach the Inventor hub only. EV3 programs run on Pybricks 4.x installed over USB (since 4.0.0) or on the legacy EV3 MicroPython 2.0 image.
+- Jev (TypeSafe) is called only from bridge.py on a laptop; the API key never enters the page.
+
+## Conventions
+
+- State lives in localStorage under `botbench-site:workbench`; the share link carries the build.
+- Source, MIT: https://github.com/energon-a-secas/botbench-site
+- Part of the Neorgon tool suite: https://neorgon.com/ (machine-readable index: https://neorgon.com/llms.txt)
