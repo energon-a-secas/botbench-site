@@ -72,7 +72,8 @@ test('exports name the right hub classes and ports', () => {
   assert.match(inv, /from pybricks.hubs import InventorHub/);
   assert.match(inv, /ColorSensor\(Port.C\)/);
   const ev3 = modesProgram(DEFAULT_BUILDS.ev3);
-  assert.match(ev3, /^#!\/usr\/bin\/env pybricks-micropython/);
+  assert.match(ev3, /^# Runs on Pybricks 4\.x on the EV3 brick/);
+  assert.doesNotMatch(ev3, /pybricks-micropython/); // the ev3dev shebang is the legacy path
   assert.match(ev3, /InfraredSensor\(Port.S4\)/);
   assert.match(bridgeScript('go', 0.3), /c5f50002-8280-46da-89f4-6d8051e4aeef/);
 });

@@ -119,32 +119,39 @@ export const ARCHETYPES = [
 
 // Ways to program each hub. "maintained" is the honest state as far as the
 // project knows; check the linked docs before flashing anything.
+// Checked against the Pybricks firmware changelog, release assets and LEGO's
+// help pages on 2026-11-03; the sources themselves disagree in places, so
+// the dates are the evidence, not the marketing pages.
 export const FIRMWARE = [
-  { id: 'pybricks-inventor', hub: 'inventor', name: 'Pybricks (MicroPython)', maintained: true,
-    how: 'Flash from code.pybricks.com in Chrome or Edge over Bluetooth. Reversible: the LEGO firmware can be restored.',
+  { id: 'pybricks-inventor', hub: 'inventor', name: 'Pybricks 4.x (MicroPython)', maintained: true,
+    how: 'Flash from code.pybricks.com in Chrome or Edge over Bluetooth. Reversible: the LEGO firmware can be restored. Python is free; block coding needs a paid licence.',
     url: 'https://pybricks.com/' },
-  { id: 'lego-inventor', hub: 'inventor', name: 'LEGO Robot Inventor app (Scratch + Python)', maintained: false,
-    how: 'The line was discontinued at the end of 2022. Fine if you still have the app; do not build a long-term plan on it.',
-    url: 'https://www.lego.com/' },
-  { id: 'pybricks-ev3', hub: 'ev3', name: 'Pybricks for EV3 (MicroPython on ev3dev)', maintained: true,
-    how: 'Write the EV3 MicroPython image to a microSD card and boot from it. Remove the card to get the stock brick back.',
-    url: 'https://pybricks.com/ev3-micropython/' },
-  { id: 'ev3dev', hub: 'ev3', name: 'ev3dev (Debian Linux, any language)', maintained: true,
-    how: 'Full Linux on a microSD card: Python 3, SSH, Wi-Fi with a supported USB dongle. Slower to boot, most flexible.',
+  { id: 'lego-inventor', hub: 'inventor', name: 'LEGO Robot Inventor app', maintained: false,
+    how: 'Gone. LEGO\'s help page says the set no longer has its own app and points to the SPIKE app, which gets no new features after June 2026 and support only until June 2031. Not a path to build on.',
+    url: 'https://www.lego.com/en-gb/service/help-topics/article/about-mindstorms-robot-inventor' },
+  { id: 'pybricks-ev3', hub: 'ev3', name: 'Pybricks 4.x on the EV3 (native firmware)', maintained: true,
+    how: 'Since 4.0.0 (June 2026) the Pybricks firmware runs on the brick itself: plug in USB, hold Right and press Centre for update mode, then Install Pybricks Firmware in the Pybricks web app. No microSD card. Programs reach it over USB, and over Bluetooth Classic since 4.1. The LEGO firmware can be restored.',
+    url: 'https://pybricks.com/project/saving-lego-mindstorms/' },
+  { id: 'ev3-micropython-2', hub: 'ev3', name: 'EV3 MicroPython 2.0 (ev3dev-based, legacy)', maintained: false,
+    how: 'The older microSD image from LEGO Education, programmed from VS Code. Pybricks dropped ev3dev support in 4.0; the Pybricks ports of the box models still target this API, so they are the reason to keep it around.',
+    url: 'https://education.lego.com/en-us/product-resources/mindstorms-ev3/teacher-resources/python-for-ev3/' },
+  { id: 'ev3dev', hub: 'ev3', name: 'ev3dev (Debian Linux, any language)', maintained: false,
+    how: 'Full Linux on a microSD card: Python 3, SSH, Wi-Fi with a supported USB dongle. Still the only way to put Wi-Fi on the brick, but its last release is from April 2020 and its news stopped the same year.',
     url: 'https://www.ev3dev.org/' },
   { id: 'lego-ev3', hub: 'ev3', name: 'Stock firmware (EV3 graphical blocks)', maintained: false,
-    how: 'What the brick ships with. Good for the box models, a dead end for anything laptop-coordinated.',
-    url: 'https://www.lego.com/' },
+    how: 'What the brick shipped with. LEGO says the home edition software is no longer available; the classroom app was announced as downloadable until July 2026.',
+    url: 'https://www.lego.com/en-us/service/help-topics/article/lego-mindstorms-ev3-troubleshooting-help' },
 ];
 
 // Extra hardware by path. cost is a rough band, not a quote.
 export const EXTRAS = [
   { id: 'none', path: 'Simulate and program the Inventor Hub', items: [
-    { name: 'A computer with Chrome or Edge and Bluetooth LE', cost: 'have it', why: 'Pybricks Code runs in the browser and flashes over Web Bluetooth.' },
+    { name: 'A computer with Chrome or Edge and Bluetooth LE', cost: 'have it', why: 'Pybricks Code runs in the browser and flashes over Web Bluetooth; the Link tab here uses the same radio.' },
   ]},
-  { id: 'ev3-sd', path: 'Program the EV3 in Python', items: [
-    { name: 'microSD card, 4 to 32 GB (SDHC, not SDXC)', cost: '$5-10', why: 'The EV3 boots ev3dev or EV3 MicroPython from it; the brick does not read SDXC.' },
-    { name: 'Mini-USB cable (in the box) or a USB Wi-Fi dongle on the ev3dev supported list', cost: '$0-15', why: 'To copy programs and, with Wi-Fi, to SSH in.' },
+  { id: 'ev3-usb', path: 'Program the EV3 in Python', items: [
+    { name: 'Mini-USB cable (in the box)', cost: 'have it', why: 'Pybricks 4 installs and connects over USB. Bluetooth Classic works from 4.1, after pairing.' },
+    { name: 'microSD card, 4 to 32 GB (SDHC, not SDXC)', cost: '$5-10', why: 'Only for the legacy paths: EV3 MicroPython 2.0 and ev3dev boot from it; the brick does not read SDXC.' },
+    { name: 'USB Wi-Fi dongle on the ev3dev supported list', cost: '$10-15', why: 'Only with ev3dev, to SSH in or let the brick reach the network itself.' },
     { name: 'Rechargeable AA cells or the EV3 battery pack', cost: '$15-60', why: 'Six AA last a short session; a laptop-coordinated robot runs for longer.' },
   ]},
   { id: 'jev', path: 'Add a Jev decision layer', items: [
@@ -152,8 +159,8 @@ export const EXTRAS = [
     { name: 'A TypeSafe API key', cost: 'usage-billed, no free tier', why: 'Billed on input tokens only. One decision per second is a few hundred tokens each.' },
   ]},
   { id: 'pi', path: 'Drive the 51515 parts from a Raspberry Pi', items: [
-    { name: 'Raspberry Pi 4 or 5', cost: '$50-80', why: 'Runs the bridge and the robot program on one board.' },
-    { name: 'Raspberry Pi Build HAT', cost: '$25-30', why: 'Drives the LPF2 motors and sensors from the 51515 box directly. Not for EV3 parts.' },
-    { name: '8V barrel power supply (the Build HAT one)', cost: '$15', why: 'Motors draw more than the Pi can supply.' },
+    { name: 'Raspberry Pi 4 or 5 on Raspberry Pi OS Bookworm', cost: '$50-80', why: 'Runs the bridge and the robot program on one board. The HAT library is not yet on Trixie.' },
+    { name: 'Raspberry Pi Build HAT', cost: '$25-30', why: 'Drives the LPF2 motors and sensors from the 51515 box directly: four ports, where the hub has six. Not for EV3 parts.' },
+    { name: '8 V barrel power supply (the Build HAT one)', cost: '$15', why: 'Motors draw more than the Pi can supply; the docs say 8 V plus or minus 10 percent, the projects use 7.5 V.' },
   ]},
 ];

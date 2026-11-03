@@ -69,7 +69,7 @@ export function createLinkPanel(s, sim, persist = () => {}) {
         : 'This browser has no Web Bluetooth. Chrome or Edge on a computer with Bluetooth LE can connect; Safari and Firefox cannot.';
     } else req.hidden = true;
     let text = source === 'ble'
-      ? 'Not connected. Load the exported program with Pybricks Code first, then disconnect Pybricks Code: a hub talks to one page at a time.'
+      ? 'Not connected. Load the exported program with Pybricks Code first. If the hub is missing from the dialog, disconnect Pybricks Code: firmware before 4.0 holds one connection.'
       : 'Not connected. The virtual hub is the simulator running the exported program: same facts, same bytes.';
     if (connected) {
       const i = link.info || {};

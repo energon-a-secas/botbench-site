@@ -14,7 +14,7 @@ export const LEVELS = [
 export const PROJECTS = [
   { id: 'spin', level: 1, title: 'Spin, stop, spin back', hub: 'either', needs: { motor: 1 }, sim: null,
     teaches: 'Motor.run_angle and the upload loop.',
-    steps: ['Flash Pybricks (Inventor) or boot EV3 MicroPython from the microSD card.', 'Plug one motor in, run it 360 degrees and back.', 'Change the speed and watch what holds and what slips.'] },
+    steps: ['Flash Pybricks from the Pybricks web app: the Inventor Hub over Bluetooth, the EV3 over USB in update mode.', 'Plug one motor in, run it 360 degrees and back.', 'Change the speed and watch what holds and what slips.'] },
   { id: 'square', level: 1, title: 'Drive a square', hub: 'either', needs: { motor: 2 }, sim: null,
     teaches: 'DriveBase.straight and DriveBase.turn, and why wheel diameter and axle track matter.',
     steps: ['Build any two-wheel rover.', 'Measure the tyre and the axle track and enter them in the build.', 'Drive 300 mm and turn 90 degrees, four times. If the square does not close, your measurements are off.'] },
@@ -69,5 +69,5 @@ export const PROJECTS = [
     steps: ['In the bridge, read a line from the keyboard instead of the hub.', 'Ask a Choice with options like forward, turn_left, dance, stop, unclear.', 'Send the mode byte. Unclear asks again rather than guessing.'] },
   { id: 'two-robots', level: 5, title: 'Two robots, one laptop', hub: 'both', needs: { motor: 4, color: 1, distance: 1 }, sim: null,
     teaches: 'Coordination: the Inventor rover scouts colours, the EV3 acts on what it reports.',
-    steps: ['The Inventor Hub reports facts over Bluetooth LE as in the Jev bridge.', 'The EV3 runs ev3dev with Wi-Fi and listens on a socket.', 'The laptop decides who moves. Neither robot needs to know the other exists.'] },
+    steps: ['The Inventor Hub reports facts over Bluetooth LE as in the Jev bridge.', 'The EV3 runs Pybricks 4 on a USB tether to the same laptop; it has no Bluetooth LE.', 'The laptop decides who moves. Neither robot needs to know the other exists.', 'Later: Pybricks 4.1 can network hubs directly, untested across these two hub types.'] },
 ];
