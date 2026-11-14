@@ -694,3 +694,10 @@ input[type="range"] { accent-color: var(--accent); width: min(360px, 100%); }
 .idea__split { display: grid; grid-template-columns: auto 1fr; gap: 4px var(--space-3); font-size: var(--text-xs); }
 .idea__split dt { color: var(--text-muted); white-space: nowrap; }
 .idea__split dd { color: var(--text-secondary); }
+
+/* Pointer-specific wording: the pad hint reads differently on a touch screen. */
+.for-coarse { display: none; }
+@media (pointer: coarse) {
+  .for-fine { display: none; }
+  .for-coarse { display: inline; }
+}

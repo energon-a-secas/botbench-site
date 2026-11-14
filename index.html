@@ -148,7 +148,6 @@
         <section class="section panel" id="panel-build" data-panel="build" aria-labelledby="h-build">
           <div class="section__titles">
             <h2 class="section__title" id="h-build">Kit and build</h2>
-            <p class="section__lead">Say which boxes you own, pick a hub, and plug parts into its ports. The planner checks every port against the connector family and the parts you actually have, then shows what your kits can build.</p>
           </div>
           <fieldset class="group">
             <legend>Your kits</legend>
@@ -183,7 +182,6 @@
         <section class="section panel" id="panel-sim" data-panel="sim" aria-labelledby="h-sim" hidden>
           <div class="section__titles">
             <h2 class="section__title" id="h-sim">Simulate</h2>
-            <p class="section__lead">A top-down rehearsal of the current build: same ports, same wheel size, same sensors. Use it to tune values before the robot is in your hands, not as a promise of how the real one behaves.</p>
           </div>
           <div class="toolbar sim-bar">
             <label class="mini-field"><span>Arena</span><select id="arena" class="select"></select></label>
@@ -202,6 +200,7 @@
             <div class="sim-stage">
               <canvas id="sim-canvas" aria-label="Simulator arena, top-down view" role="img"></canvas>
               <p id="arena-note" class="field__hint"></p>
+              <p class="field__hint">Same ports, wheels and sensors as your build. Tune values here, and expect the real robot to differ.</p>
             </div>
             <aside class="sim-side" aria-label="Robot readout">
               <div id="readout"></div>
@@ -232,7 +231,6 @@
         <section class="section panel" id="panel-projects" data-panel="projects" aria-labelledby="h-projects" hidden>
           <div class="section__titles">
             <h2 class="section__title" id="h-projects">Projects</h2>
-            <p class="section__lead">Eighteen projects in five levels, from one spinning motor to a robot that asks Jev what to do next. Each one is marked against your kits; the ones with a simulator setup load straight into the arena.</p>
           </div>
           <div id="projects"></div>
         </section>
@@ -240,7 +238,6 @@
         <section class="section panel" id="panel-models" data-panel="models" aria-labelledby="h-models" hidden>
           <div class="section__titles">
             <h2 class="section__title" id="h-models">Models and ideas</h2>
-            <p class="section__lead">Builds other people have published with instructions, so you can replicate them instead of starting from a pile of beams, and ideas that go past the box. Each model names its kit, its programming path, and what you would need beyond the box. Links go to the source; nothing is copied here.</p>
           </div>
           <div id="models"></div>
         </section>
@@ -248,7 +245,6 @@
         <section class="section panel" id="panel-paths" data-panel="paths" aria-labelledby="h-paths" hidden>
           <div class="section__titles">
             <h2 class="section__title" id="h-paths">Paths and hardware</h2>
-            <p class="section__lead">How to program each hub today, what to buy for each path, and where an AI decision layer fits without getting in the way of the motors.</p>
           </div>
           <div id="paths"></div>
         </section>
@@ -256,7 +252,6 @@
         <section class="section panel" id="panel-export" data-panel="export" aria-labelledby="h-export" hidden>
           <div class="section__titles">
             <h2 class="section__title" id="h-export">Export code</h2>
-            <p class="section__lead">The current build and brain as Pybricks MicroPython. Rules export as a loop on the hub. Modes export as a hub program that reports facts, plus a laptop bridge that asks Jev and sends back a mode.</p>
           </div>
           <div id="export"></div>
         </section>
@@ -264,7 +259,6 @@
         <section class="section panel" id="panel-link" data-panel="link" aria-labelledby="h-link" hidden>
           <div class="section__titles">
             <h2 class="section__title" id="h-link">Link to the hub</h2>
-            <p class="section__lead">Connect to a Robot Inventor Hub running Pybricks from this page, over Bluetooth LE. Watch what it senses, switch its mode, drive it by hand, or let the stand-in decider pick. Try it on the virtual hub first: that is the simulator answering exactly as the exported program would.</p>
           </div>
           <div class="toolbar sim-bar">
             <div class="seg" id="link-source" role="radiogroup" aria-label="Hub">
@@ -285,7 +279,7 @@
             <div class="group">
               <h3 class="group__title">Drive by hand</h3>
               <div id="teleop" class="pad" tabindex="0" role="group" aria-label="Teleop pad. With the pad focused, arrow keys or W A S D drive and release stops."></div>
-              <p class="field__hint">Click the pad, then hold an arrow key or W A S D. Letting go stops. Each press is one byte to the hub.</p>
+              <p class="field__hint"><span class="for-fine">Click the pad, then hold an arrow key or W A S D. Letting go stops.</span><span class="for-coarse">Tap an arrow to drive and the square to stop.</span> Each press is one byte to the hub.</p>
             </div>
             <div class="group">
               <h3 class="group__title">Mode</h3>
