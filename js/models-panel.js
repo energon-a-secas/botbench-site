@@ -65,7 +65,7 @@ export function renderModels(s) {
   </div>`).join('');
   const ideas = `<div class="level">
     <h3 class="level__title">Bigger ideas</h3>
-    <p class="field__hint">Each one says what the 2D arena can rehearse and what only the real robot can tell you. Most fit the shape this site already uses: the hub runs the fast loops, a laptop asks a typed question, a byte comes back.</p>
+    <p class="field__hint">Most fit the shape the exported modes program already uses: the hub runs the fast loops, a laptop asks a typed question, a byte comes back.</p>
     <div class="project-grid project-grid--wide">${IDEAS.map((idea, i) => ideaCard(idea, owned, i)).join('')}</div>
   </div>`;
   const empty = !MODEL_BUCKETS.length && !IDEAS.length ? '<p class="field__hint">Nothing catalogued yet.</p>' : '';

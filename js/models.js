@@ -67,7 +67,7 @@ export const MODEL_BUCKETS = [
       { name: 'Droid Bot M, Robot Inventor version', by: 'Sanjay and Arvind Seshan (Prime Lessons)', kits: ['51515'], what: 'Modular FLL training base with a sample attachment.', instructions: 'https://primelessons.org/RobotDesigns/instructions/DroidBotMRobotInventor.pdf', page: 'https://primelessons.org/en/RobotDesigns.html', platform: 'LEGO app lessons; any', difficulty: 2, free: true, note: 'CC BY-NC-SA 4.0.' },
       { name: 'Tricky Grab and Lift; Tic-Tac-Toe', by: 'Arvind and Sanjay Seshan (Prime Lessons)', kits: ['51515'], what: 'A Tricky extension that grabs and lifts the ball, and a one-kit tic-tac-toe game. The programs are .lms files for the retired app.', instructions: 'https://primelessons.org/RobotDesigns/instructions/TrickyGrabandLift.pdf', page: 'https://primelessons.org/RobotDesigns/instructions/tic-tac-toe.pdf', platform: 'LEGO app .lms', difficulty: 2, free: true, extras: 'tic-tac-toe: four blue and four red zamor spheres' },
       { name: 'OneKitProjects, twelve models', by: 'Dave Parker', kits: ['51515'], what: 'Mechanical Bull, Shake Table, Crane, Mini Loader, Cat, 1-Motor Walker, Spider, 4-Motor Walker, Slot Machine, 6-Wheeler, Bowling, Whack-a-Mole: one kit each, with a programs zip per model.', instructions: 'https://www.onekitprojects.com/51515', platform: 'LEGO app programs; two have Pybricks ports', difficulty: 2, free: true, note: 'CC BY-NC-SA 4.0.' },
-      { name: 'MindCub3r (31313) and MindCuber-RI (51515)', by: 'David Gilday', kits: ['31313', '51515'], what: 'The Rubik\'s cube solving robots. The site could not be read from here (its robots file answers an error), so nothing about it is confirmed; the project name is well known.', page: 'https://mindcuber.com/', platform: 'MindCuber-RI: the Robot Inventor app (unverified)', difficulty: 3, free: 'unverified', extras: 'a 3x3 cube', note: 'Unverified: not fetched.' },
+      { name: 'MindCub3r (31313) and MindCuber-RI (51515)', by: 'David Gilday', kits: ['31313', '51515'], what: 'The Rubik\'s cube solving robots, a well-known project whose details are unconfirmed.', page: 'https://mindcuber.com/', platform: 'MindCuber-RI: the Robot Inventor app (unverified)', difficulty: 3, free: 'unverified', extras: 'a 3x3 cube' },
       { name: 'L3onardo vertical plotter', by: 'Anton\'s Mindstorms', kits: ['31313'], what: 'A one-kit vertical plotter, sold as a PDF.', page: 'https://www.antonsmindstorms.com/product-category/digital-downloads2/', platform: 'Not checked', difficulty: 3, free: false, extras: 'pen and paper' },
     ],
   },
@@ -97,9 +97,9 @@ export const MODEL_BUCKETS = [
   {
     id: 'rebrickable',
     title: 'Rebrickable',
-    lead: 'Fan designs built from exactly these sets, some free and some paid. Rebrickable refused every automated read, so nothing is listed by name here: search its MOCs for 51515-1 and 31313-1, and link to the designer\'s page rather than mirroring a PDF, as its terms ask.',
+    lead: 'Fan designs built from exactly these sets, some free and some paid. Search its MOCs for 51515-1 and 31313-1, and link to the designer\'s page rather than mirroring a PDF, as its terms ask.',
     items: [
-      { name: 'MOCs built from 51515-1 and 31313-1', by: 'Rebrickable designers', kits: ['51515', '31313'], what: 'Alternate builds and original designs filtered by the set you own; each page says whether the instructions are free.', page: 'https://rebrickable.com/', platform: 'Varies; most were written for the retired apps', free: 'varies', note: 'Not read from here: the site answers 403 to scripts.' },
+      { name: 'MOCs built from 51515-1 and 31313-1', by: 'Rebrickable designers', kits: ['51515', '31313'], what: 'Alternate builds and original designs filtered by the set you own; each page says whether the instructions are free.', page: 'https://rebrickable.com/', platform: 'Varies; most were written for the retired apps', free: 'varies' },
     ],
   },
 ];
